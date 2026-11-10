@@ -300,19 +300,36 @@ async function boot() {
   await startGame(data.session.user);
 }
 
+const EMAIL_DOMAIN = "elev8empire.vercel.app"; // hidden login emails, never used for real mail
+
 async function doAuth(mode) {
-  const email = $("authEmail").value.trim();
+  const username = $("authUsername").value.trim().toLowerCase();
   const password = $("authPass").value;
-  const username = $("authUsername").value.trim();
   const msg = $("authMsg");
   msg.textContent = "";
-  if (!email || !password) { msg.textContent = "Enter your email and password."; return; }
-  if (mode === "signup" && !username) { msg.textContent = "Pick a username to create an account."; return; }
+  if (!/^[a-z0-9_]{3,20}$/.test(username)) {
+    msg.textContent = "Username: 3–20 letters, numbers or _ only.";
+    return;
+  }
+  if (password.length < 6) {
+    msg.textContent = "Password must be at least 6 characters.";
+    return;
+  }
+  const email = `${username}@${EMAIL_DOMAIN}`;
   const res = mode === "signup"
     ? await sbClient.auth.signUp({ email, password, options: { data: { username } } })
     : await sbClient.auth.signInWithPassword({ email, password });
-  if (res.error) { msg.textContent = res.error.message; return; }
-  if (!res.data.session) { msg.textContent = "Check your email to confirm your account, then log in."; return; }
+  if (res.error) {
+    const m = res.error.message || "";
+    msg.textContent = /already registered/i.test(m) ? "That username is taken."
+      : /invalid login/i.test(m) ? "Wrong username or password."
+      : m;
+    return;
+  }
+  if (!res.data.session) {
+    msg.textContent = "Signup needs 'Confirm email' turned OFF in Supabase.";
+    return;
+  }
   await startGame(res.data.session.user);
 }
 

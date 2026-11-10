@@ -1,0 +1,1240 @@
+/* ═══════════════════════════════════════════
+   RESET & TOKENS
+═══════════════════════════════════════════ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #07040f;
+  --bg2: #0d0919;
+  --surface: #161024;
+  --surface2: #1d1530;
+  --border: rgba(240, 168, 48, 0.16);
+  --border-lit: rgba(240, 168, 48, 0.4);
+  --gold: #f0a830;
+  --gold2: #ffd060;
+  --gold-dim: #c8892a;
+  --purple: #7b3fcc;
+  --purple2: #a06ef0;
+  --cyan: #40e0d0;
+  --green: #4ade80;
+  --red: #f0554a;
+  --white: #f5f0e8;
+  --muted: #8a82a0;
+  --muted2: #5f5876;
+  --silver: #c8ccd4;
+  --bronze: #c97a4a;
+}
+
+/* ═══════════════════════════════════════════
+   ICONS (inline SVG, replaces emoji glyphs)
+═══════════════════════════════════════════ */
+.icon {
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  vertical-align: -0.15em;
+  flex-shrink: 0;
+}
+/* When an .icon is used as a fallback inside a round avatar slot (no profile
+   picture set / image failed to load), scale it to fill the circle cleanly
+   instead of inheriting the tiny font-size of the container, which made the
+   SVG strokes render as illegible cramped squiggles. */
+.pp-avatar .icon,
+.dash-avatar .icon,
+.gallery-card-img-fallback .icon {
+  width: 55%;
+  height: 55%;
+  color: rgba(255,255,255,0.85);
+}
+.pp-avatar,
+.dash-avatar {
+  overflow: hidden;
+}
+.inline-icon {
+  display: inline-flex;
+  vertical-align: -0.15em;
+}
+.toast-icon {
+  display: inline-flex;
+  align-items: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.rank-gold {
+  color: var(--gold2);
+}
+.rank-silver {
+  color: var(--silver);
+}
+.rank-bronze {
+  color: var(--bronze);
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: "Inter", sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: contain;
+  height: 100%;
+}
+
+#app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  background: var(--bg);
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.6);
+}
+
+@media (min-width: 481px) {
+  body {
+    background: #000;
+  }
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+input {
+  font-family: inherit;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* ═══════════════════════════════════════════
+   UTILITY
+═══════════════════════════════════════════ */
+.hidden {
+  display: none !important;
+}
+.display {
+  font-family: "Bangers", cursive;
+  letter-spacing: 2px;
+}
+.mono {
+  font-family: "Space Mono", monospace;
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   SPLASH
+═══════════════════════════════════════════ */
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background:
+    radial-gradient(
+      ellipse 80% 50% at 50% 0%,
+      rgba(123, 63, 204, 0.18) 0%,
+      transparent 60%
+    ),
+    var(--bg);
+  text-align: center;
+  padding: 32px;
+}
+.splash-logo {
+  font-size: 64px;
+  color: var(--gold);
+  text-shadow: 0 0 40px rgba(240, 168, 48, 0.6);
+}
+.splash-sub {
+  color: var(--purple2);
+  font-size: 13px;
+  letter-spacing: 3px;
+  font-weight: 700;
+}
+.splash-spinner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid rgba(240, 168, 48, 0.2);
+  border-top-color: var(--gold);
+  animation: spin 0.8s linear infinite;
+}
+.splash-msg {
+  font-size: 13px;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ═══════════════════════════════════════════
+   TELEGRAM GATE
+═══════════════════════════════════════════ */
+.gate {
+  position: fixed;
+  inset: 0;
+  z-index: 998;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background:
+    radial-gradient(
+      ellipse 80% 50% at 50% 0%,
+      rgba(123, 63, 204, 0.18) 0%,
+      transparent 60%
+    ),
+    var(--bg);
+  text-align: center;
+  padding: 32px;
+}
+.gate-logo {
+  font-size: 52px;
+  color: var(--gold);
+  text-shadow: 0 0 30px rgba(240, 168, 48, 0.6);
+}
+.gate-sub {
+  color: var(--purple2);
+  font-size: 13px;
+  letter-spacing: 3px;
+  font-weight: 700;
+}
+.gate-lock {
+  font-size: 40px;
+  margin-top: 8px;
+}
+.gate-title {
+  font-weight: 800;
+  font-size: 18px;
+}
+.gate-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 280px;
+}
+.gate-btn {
+  margin-top: 8px;
+  max-width: 260px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ═══════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════ */
+.screen {
+  min-height: 100vh;
+  padding-bottom: 90px;
+  position: relative;
+}
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+.container {
+  padding: 0 20px;
+}
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.section-label {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+/* ═══════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 15px;
+  padding: 14px 24px;
+  border-radius: 14px;
+  transition:
+    transform 0.12s,
+    box-shadow 0.12s,
+    opacity 0.12s;
+  width: 100%;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn-gold {
+  background: linear-gradient(135deg, var(--gold2), var(--gold));
+  color: #1a0f00;
+  box-shadow:
+    0 4px 0 var(--gold-dim),
+    0 6px 20px rgba(240, 168, 48, 0.35);
+}
+.btn-gold:active {
+  box-shadow:
+    0 1px 0 var(--gold-dim),
+    0 2px 8px rgba(240, 168, 48, 0.25);
+}
+.btn-ghost {
+  background: var(--surface);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  color: var(--white);
+}
+.btn-purple {
+  background: linear-gradient(135deg, var(--purple2), var(--purple));
+  color: #fff;
+  box-shadow:
+    0 4px 0 #5a2ba8,
+    0 6px 20px rgba(123, 63, 204, 0.35);
+}
+.btn-red {
+  background: var(--red);
+  color: #fff;
+}
+.btn:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════
+   CARDS
+═══════════════════════════════════════════ */
+.card {
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+  padding: 18px;
+}
+
+/* ═══════════════════════════════════════════
+   INPUTS
+═══════════════════════════════════════════ */
+.input-group {
+  margin-bottom: 16px;
+}
+.input-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+  display: block;
+}
+.input {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--surface2);
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  color: var(--white);
+  font-size: 15px;
+  transition: border-color 0.2s;
+}
+.input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+.input::placeholder {
+  color: var(--muted2);
+}
+
+/* ═══════════════════════════════════════════
+   PROGRESS BARS
+═══════════════════════════════════════════ */
+.progress-track {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+.gold-fill {
+  background: linear-gradient(
+    90deg,
+    var(--gold-dim),
+    var(--gold),
+    var(--gold2)
+  );
+}
+.purple-fill {
+  background: linear-gradient(90deg, var(--purple), var(--purple2));
+}
+.green-fill {
+  background: linear-gradient(90deg, #22c55e, var(--green));
+}
+
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+.toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface2);
+  border: 1px solid var(--border-lit);
+  padding: 12px 22px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  z-index: 500;
+  white-space: nowrap;
+  max-width: 90%;
+  animation: toastIn 0.3s ease;
+}
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   BOTTOM NAV
+═══════════════════════════════════════════ */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-width: 480px;
+  margin: 0 auto;
+  background: rgba(13, 9, 25, 0.95);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+  z-index: 100;
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted);
+  padding: 4px 6px;
+  border-radius: 10px;
+  transition: color 0.2s;
+}
+.nav-item.active {
+  color: var(--gold);
+}
+.nav-icon {
+  font-size: 18px;
+}
+
+/* ═══════════════════════════════════════════
+   PAGE HEADERS
+═══════════════════════════════════════════ */
+.page-title {
+  font-size: 32px;
+  color: var(--gold);
+  margin-bottom: 4px;
+  padding-top: 24px;
+}
+.page-sub {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-top: 24px;
+}
+.dash-welcome {
+  font-size: 13px;
+  color: var(--muted);
+}
+.dash-username {
+  font-size: 20px;
+  font-weight: 800;
+}
+.dash-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple2), var(--purple));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  border: 2px solid rgba(240, 168, 48, 0.3);
+  cursor: pointer;
+}
+.stat-box {
+  text-align: center;
+  padding: 14px;
+}
+.stat-icon {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+.stat-val {
+  font-size: 22px;
+  font-weight: 800;
+}
+.stat-lbl {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+}
+.gold {
+  color: var(--gold);
+}
+.purple {
+  color: var(--purple2);
+}
+.green {
+  color: var(--green);
+}
+
+/* ═══════════════════════════════════════════
+   TAP SCREEN
+═══════════════════════════════════════════ */
+/* Center the whole tap section (title, energy bar, coin, hint) vertically
+   between the top and the bottom nav, instead of it sitting pinned to the
+   top of the screen. */
+#screen-tap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.tap-progress {
+  position: relative;
+  width: 10px;
+  height: 190px;
+  margin: 0;
+  max-width: none;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Bar sits beside the coin, not stacked above it — reads as a gauge
+   feeding the object it's powering, rather than a disconnected loading
+   strip up near the title. */
+.tap-arena-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+.tap-progress-wrap {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+/* Override the arena's auto-centering margin so it sits directly beside
+   the gauge instead of absorbing the row's leftover space and drifting
+   away from it. */
+.tap-arena-row .tap-arena {
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.tap-arena {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+.tap-glow {
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(240, 168, 48, 0.25) 0%,
+    transparent 70%
+  );
+  animation: pulse 2s ease-in-out infinite;
+  pointer-events: none;
+}
+.tap-coin {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background:
+    linear-gradient(180deg, rgba(10, 6, 2, 0.05) 0%, rgba(10, 6, 2, 0.28) 100%),
+    url("images/tap-eagle.jpg");
+  background-size: cover;
+  background-position: center 34%;
+  border: 6px solid rgba(255, 208, 96, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow:
+    0 0 0 8px rgba(240, 168, 48, 0.15),
+    inset 0 -8px 20px rgba(0, 0, 0, 0.35),
+    inset 0 8px 20px rgba(255, 255, 255, 0.12),
+    0 10px 40px rgba(240, 168, 48, 0.3);
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
+  cursor: pointer;
+  z-index: 1;
+}
+.tap-coin:active {
+  transform: scale(0.94);
+  box-shadow:
+    0 0 0 2px rgba(240, 168, 48, 0.15),
+    inset 0 -8px 20px rgba(0, 0, 0, 0.25),
+    inset 0 8px 20px rgba(255, 255, 255, 0.2),
+    0 4px 20px rgba(240, 168, 48, 0.2);
+}
+.tap-coin.done {
+  filter: grayscale(0.8) brightness(0.55);
+  box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.4);
+  cursor: default;
+}
+
+.tap-particle {
+  position: absolute;
+  font-family: "Bangers", cursive;
+  font-size: 22px;
+  color: var(--gold2);
+  text-shadow: 0 0 10px rgba(240, 168, 48, 0.8);
+  pointer-events: none;
+  animation: floatUp 0.7s ease-out forwards;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+@keyframes floatUp {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -160%) scale(1.4);
+  }
+}
+.tap-done {
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  background: rgba(74, 222, 128, 0.06);
+  text-align: center;
+}
+.tap-hint {
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted2);
+}
+/* ═══════════════════════════════════════════
+   LEADERBOARD
+═══════════════════════════════════════════ */
+.tab-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.tab-btn {
+  flex: 1;
+  padding: 10px 0;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  background: #161024;
+  color: var(--muted);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition:
+    background 0.2s,
+    color 0.2s;
+  cursor: pointer;
+}
+.tab-btn.active {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  color: #1a0f00;
+  border: none;
+}
+
+/* Store screen now has 4 tabs — wrap into 2 rows of 2 on narrow screens */
+.tab-row-store {
+  flex-wrap: wrap;
+}
+.tab-row-store .tab-btn {
+  flex: 1 1 45%;
+}
+
+.lb-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 8px;
+}
+.lb-row.is-me {
+  border-color: rgba(240, 168, 48, 0.4);
+  background: rgba(240, 168, 48, 0.06);
+}
+.lb-rank {
+  width: 28px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--muted);
+}
+.lb-rank.medal {
+  font-size: 20px;
+  color: inherit;
+}
+.lb-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple2), var(--purple));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.lb-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.lb-avatar-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lb-reset-info {
+  font-size: 11px;
+  color: var(--muted);
+  margin: -12px 0 14px 2px;
+}
+.lb-name {
+  font-weight: 700;
+  font-size: 14px;
+}
+.lb-sub {
+  font-size: 11px;
+  color: var(--muted);
+}
+.lb-ep {
+  text-align: right;
+}
+.lb-ep-val {
+  font-weight: 800;
+  color: var(--gold);
+  font-size: 14px;
+}
+.lb-ep-lbl {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.loading-msg {
+  text-align: center;
+  color: var(--muted);
+  padding: 40px 0;
+}
+.profile-hero {
+  text-align: center;
+  padding: 32px 20px;
+  margin-bottom: 16px;
+  background:
+    radial-gradient(
+      ellipse 100% 100% at 50% 0%,
+      rgba(160, 110, 240, 0.12) 0%,
+      transparent 70%
+    ),
+    #161024;
+}
+.profile-avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  margin: 0 auto 14px;
+  background: linear-gradient(135deg, var(--purple2), var(--purple));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+  border: 3px solid rgba(240, 168, 48, 0.3);
+}
+.profile-name {
+  font-weight: 800;
+  font-size: 20px;
+}
+.profile-rank-badge {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 14px;
+  border-radius: 50px;
+  background: rgba(240, 168, 48, 0.12);
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ═══════════════════════════════════════════
+   ELEV8 EMPIRE — game-specific styles
+   (everything above is reused from Elev8's style.css)
+═══════════════════════════════════════════ */
+
+/* ── Cash bar (always visible) ── */
+.cash-bar {
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: calc(10px + env(safe-area-inset-top)) 20px 10px;
+  background: rgba(13, 9, 25, 0.96);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.cash-bar-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--gold);
+}
+.cash-bar-val {
+  font-size: 28px;
+  line-height: 1.05;
+  color: var(--gold2);
+  text-shadow: 0 0 20px rgba(240, 168, 48, 0.4);
+}
+.cash-bar-inc {
+  font-family: "Space Mono", monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green);
+}
+
+/* ── Empire hero ── */
+.cash-hero {
+  text-align: center;
+  padding: 26px 20px;
+  margin-bottom: 14px;
+  background:
+    radial-gradient(ellipse 100% 100% at 50% 0%, rgba(240, 168, 48, 0.12) 0%, transparent 70%),
+    #161024;
+  border: 1px solid rgba(240, 168, 48, 0.2);
+}
+.cash-hero-label {
+  font-size: 12px;
+  color: var(--gold);
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+.cash-hero-value {
+  font-size: 48px;
+  line-height: 1;
+  color: var(--gold2);
+  text-shadow: 0 0 30px rgba(240, 168, 48, 0.5);
+}
+.cash-hero-sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 8px;
+}
+.cash-hero-sub b {
+  color: var(--purple2);
+}
+
+.action-btn {
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 10px;
+}
+.action-title {
+  font-size: 14px;
+  font-weight: 800;
+}
+.action-sub {
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.75;
+}
+
+/* ── Businesses & assets ── */
+.biz-card {
+  margin-bottom: 12px;
+}
+.biz-card.locked {
+  opacity: 0.5;
+}
+.biz-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.biz-icon {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: rgba(240, 168, 48, 0.12);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+.biz-info {
+  flex: 1;
+  min-width: 0;
+}
+.biz-name {
+  font-weight: 800;
+  font-size: 15px;
+}
+.biz-meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.biz-milestone {
+  margin: 14px 0 12px;
+}
+.biz-milestone-lbl {
+  font-size: 11px;
+  color: var(--muted2);
+  margin-top: 6px;
+}
+.biz-actions {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 0.8fr;
+  gap: 8px;
+}
+
+.buy-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  padding: 9px 6px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--gold2), var(--gold));
+  color: #1a0f00;
+  box-shadow: 0 3px 0 var(--gold-dim);
+  transition: transform 0.1s, box-shadow 0.1s, opacity 0.15s;
+}
+.buy-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--gold-dim);
+}
+.buy-lbl {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.buy-cost {
+  font-size: 13px;
+  font-weight: 800;
+}
+.buy-btn.buy-max {
+  background: linear-gradient(135deg, var(--purple2), var(--purple));
+  color: #fff;
+  box-shadow: 0 3px 0 #5a2ba8;
+}
+.buy-btn.cant {
+  opacity: 0.38;
+  filter: grayscale(0.5);
+  box-shadow: none;
+}
+
+.asset-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  padding: 14px;
+}
+.asset-buy {
+  min-width: 96px;
+  flex-shrink: 0;
+}
+.asset-owned {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--green);
+  margin-top: 3px;
+}
+
+/* ── Tap coin (gold coin, no image needed) ── */
+.tap-coin {
+  background:
+    radial-gradient(circle at 35% 30%, #ffe9a8 0%, var(--gold2) 28%, var(--gold) 62%, var(--gold-dim) 100%);
+  border: 6px solid rgba(255, 208, 96, 0.55);
+}
+.tap-coin-sym {
+  font-size: 110px;
+  line-height: 1;
+  color: #5a3600;
+  text-shadow: 0 2px 0 rgba(255, 233, 168, 0.7);
+  pointer-events: none;
+}
+
+/* ── Market ── */
+.mkt-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  text-align: left;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.mkt-row:active {
+  border-color: var(--border-lit);
+}
+.mkt-left {
+  min-width: 0;
+}
+.mkt-sym {
+  font-weight: 800;
+  font-size: 15px;
+}
+.mkt-name {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.mkt-right {
+  text-align: right;
+  flex-shrink: 0;
+}
+.mkt-price {
+  font-family: "Space Mono", monospace;
+  font-weight: 700;
+  font-size: 14px;
+}
+.mkt-chg {
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+.up {
+  color: var(--green);
+}
+.down {
+  color: var(--red);
+}
+
+/* ── Trade sheet ── */
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0, 0, 0, 0.72);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.sheet {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  background: #13102a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: none;
+  border-radius: 22px 22px 0 0;
+  padding: 22px 20px calc(22px + env(safe-area-inset-bottom));
+  animation: sheetUp 0.25s ease;
+}
+@keyframes sheetUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.sheet-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--surface2);
+  color: var(--muted);
+  font-size: 14px;
+}
+.sheet-title {
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--muted);
+  padding-right: 40px;
+}
+.sheet-price {
+  font-size: 40px;
+  color: var(--gold2);
+  margin-top: 4px;
+}
+.sheet-hold {
+  margin-top: 14px;
+  padding: 14px;
+}
+.sheet-hold-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.sheet-hold-row b {
+  color: var(--white);
+}
+.trade-pl {
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+.trade-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.trade-btn {
+  padding: 14px 4px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 13px;
+  transition: transform 0.1s;
+}
+.trade-btn:active {
+  transform: scale(0.96);
+}
+.trade-buy {
+  background: rgba(74, 222, 128, 0.15);
+  border: 1px solid rgba(74, 222, 128, 0.4);
+  color: var(--green);
+}
+.trade-sell {
+  background: rgba(240, 85, 74, 0.13);
+  border: 1px solid rgba(240, 85, 74, 0.4);
+  color: var(--red);
+}
+
+/* ── Profile bonuses ── */
+.bonus-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 9px 0;
+  font-size: 13px;
+  color: var(--muted);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.bonus-row:last-child {
+  border-bottom: none;
+}
+.bonus-row b {
+  color: var(--gold);
+}
+
+/* long toasts (e.g. welcome-back) wrap instead of running off-screen */
+.toast {
+  white-space: normal;
+  text-align: center;
+  width: max-content;
+}
+
+
+/* Auth form */
+.auth-form { width: 100%; max-width: 340px; display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+.auth-form input {
+  width: 100%; padding: 14px 16px; border-radius: 12px; font: inherit; font-size: 15px;
+  background: rgba(255,255,255,.06); color: #fff; border: 1px solid rgba(255,255,255,.14); outline: none;
+}
+.auth-form input:focus { border-color: var(--gold2, #f5c542); }
+.auth-form .gate-btn { width: 100%; justify-content: center; margin: 0; }

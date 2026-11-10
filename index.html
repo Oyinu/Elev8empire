@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Elev8 Empire – Build Your Fortune</title>
+  <meta name="theme-color" content="#07040F" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bangers&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- SPLASH -->
+  <div id="splash" class="splash">
+    <div class="display splash-logo">ELEV8 EMPIRE</div>
+    <div class="splash-sub">BUILD · INVEST · RISE</div>
+    <div class="splash-spinner"></div>
+    <div class="splash-msg" id="splashMsg">Loading...</div>
+  </div>
+
+  <!-- Login / signup -->
+  <div id="authScreen" class="gate hidden">
+    <div class="display gate-logo">ELEV8 EMPIRE</div>
+    <div class="gate-sub">BUILD · INVEST · RISE</div>
+    <div class="auth-form">
+      <input id="authUsername" placeholder="Username (for new accounts)" autocomplete="username" />
+      <input id="authEmail" type="email" placeholder="Email" autocomplete="email" />
+      <input id="authPass" type="password" placeholder="Password (6+ characters)" autocomplete="current-password" />
+      <button class="btn btn-gold gate-btn" onclick="doAuth('login')">Log in</button>
+      <button class="btn btn-purple gate-btn" onclick="doAuth('signup')">Create account</button>
+      <div class="gate-desc" id="authMsg"></div>
+    </div>
+  </div>
+
+  <div id="app" class="hidden">
+
+    <!-- Always-visible cash bar -->
+    <div class="cash-bar" id="cashBar">
+      <div>
+        <div class="cash-bar-label">CASH</div>
+        <div class="display cash-bar-val" id="cashBarVal">$0</div>
+      </div>
+      <div class="cash-bar-inc" id="cashBarInc">+$0/s</div>
+    </div>
+
+    <!-- EMPIRE -->
+    <div id="screen-empire" class="screen hidden">
+      <div class="container fade-in">
+        <div class="dash-header">
+          <div>
+            <div class="dash-welcome">Welcome back,</div>
+            <div class="dash-username" id="dashUsername">—</div>
+          </div>
+          <button class="dash-avatar" onclick="navigate('profile')"><svg class="icon" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg></button>
+        </div>
+
+        <div class="card cash-hero">
+          <div class="cash-hero-label">NET WORTH</div>
+          <div class="display cash-hero-value" id="netWorthVal">$0</div>
+          <div class="cash-hero-sub">Income multiplier <b id="multVal">x1.00</b></div>
+        </div>
+
+        <div class="two-col" style="margin-bottom:20px">
+          <button class="btn btn-gold action-btn" id="dailyBtn" onclick="claimDaily()">
+            <span class="action-title">Daily Reward</span>
+            <span class="action-sub" id="dailySub">Ready to claim</span>
+          </button>
+          <button class="btn btn-purple action-btn" id="boostBtn" onclick="activateBoost()">
+            <span class="action-title">Profit Boost</span>
+            <span class="action-sub" id="boostSub">—</span>
+          </button>
+        </div>
+
+        <div class="section-label">YOUR BUSINESSES</div>
+        <div id="bizList"></div>
+      </div>
+    </div>
+
+    <!-- TAP -->
+    <div id="screen-tap" class="screen hidden">
+      <div class="container" style="text-align:center">
+        <div class="display page-title">TAP TO EARN</div>
+        <div class="page-sub" id="tapValue">+$5 per tap</div>
+      </div>
+
+      <div class="tap-arena" id="tapArena" style="margin-top:28px">
+        <div class="tap-glow"></div>
+        <div id="tapParticles"></div>
+        <button class="tap-coin" id="tapCoin" onclick="handleTap(event)"><span class="display tap-coin-sym">$</span></button>
+      </div>
+
+      <div class="container" style="margin-top:36px">
+        <div class="card" style="text-align:center">
+          <div style="font-size:12px;color:var(--muted);letter-spacing:1px;font-weight:700" id="tapLevel">Tap power Lv 1</div>
+          <div style="font-size:12px;color:var(--muted2);margin:4px 0 14px" id="tapTotal">0 total taps</div>
+          <button class="buy-btn asset-buy" style="width:100%" id="tapUpgradeBtn" data-cost="200" onclick="upgradeTap()">
+            <span class="buy-lbl">Upgrade tap power</span><span class="buy-cost" id="tapUpgradeCost">$200</span>
+          </button>
+        </div>
+        <div class="tap-hint" style="margin-top:14px">Tapping is a side boost. Real money comes from your businesses working while you're away.</div>
+      </div>
+    </div>
+
+    <!-- MARKET -->
+    <div id="screen-market" class="screen hidden">
+      <div class="container fade-in">
+        <div class="display page-title">MARKET</div>
+        <p class="page-sub" style="margin-bottom:16px">Buy low, sell high. Prices move every 5 minutes. 0.5% fee per trade.</p>
+
+        <div class="card" style="text-align:center;margin-bottom:16px;padding:14px">
+          <div style="font-size:11px;color:var(--muted);letter-spacing:1px;font-weight:700">PORTFOLIO VALUE</div>
+          <div class="display" style="font-size:30px;color:var(--gold2)" id="portfolioVal">$0</div>
+        </div>
+
+        <div class="tab-row" id="marketTabs">
+          <button class="tab-btn active" data-tab="stock" onclick="switchMarketTab('stock')">Stocks</button>
+          <button class="tab-btn" data-tab="crypto" onclick="switchMarketTab('crypto')">Crypto</button>
+        </div>
+        <div id="marketList"></div>
+      </div>
+    </div>
+
+    <!-- ASSETS -->
+    <div id="screen-assets" class="screen hidden">
+      <div class="container fade-in">
+        <div class="display page-title">ASSETS</div>
+        <p class="page-sub" style="margin-bottom:16px">Real estate pays rent. Cars, jets and yachts boost every dollar you earn.</p>
+
+        <div class="tab-row tab-row-store" id="assetTabs">
+          <button class="tab-btn active" data-tab="realestate" onclick="switchAssetTab('realestate')">Real Estate</button>
+          <button class="tab-btn" data-tab="car" onclick="switchAssetTab('car')">Cars</button>
+          <button class="tab-btn" data-tab="jet" onclick="switchAssetTab('jet')">Jets</button>
+          <button class="tab-btn" data-tab="yacht" onclick="switchAssetTab('yacht')">Yachts</button>
+        </div>
+        <div id="assetList"></div>
+      </div>
+    </div>
+
+    <!-- RANKS -->
+    <div id="screen-ranks" class="screen hidden">
+      <div class="container fade-in">
+        <div class="display page-title">RICH LIST</div>
+        <p class="page-sub" style="margin-bottom:20px">The wealthiest players, ranked by net worth.</p>
+        <div id="rankList"><div class="loading-msg">Loading rankings...</div></div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div id="screen-profile" class="screen hidden">
+      <div class="container fade-in">
+        <div class="display page-title">PROFILE</div>
+
+        <div class="card profile-hero">
+          <div class="profile-avatar"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg></div>
+          <div class="profile-name" id="profileName">—</div>
+          <div class="profile-rank-badge" id="profileRankBadge">Newcomer</div>
+        </div>
+
+        <div class="two-col" style="margin-bottom:16px">
+          <div class="card stat-box"><div class="stat-val gold" id="profileNW">$0</div><div class="stat-lbl">Net worth</div></div>
+          <div class="card stat-box"><div class="stat-val green" id="profileInc">$0/s</div><div class="stat-lbl">Income</div></div>
+          <div class="card stat-box"><div class="stat-val" id="profileTapLv">Lv 1</div><div class="stat-lbl">Tap power</div></div>
+          <div class="card stat-box"><div class="stat-val" id="profileTaps">0</div><div class="stat-lbl">Total taps</div></div>
+        </div>
+
+        <div class="card" style="margin-bottom:16px">
+          <div class="section-label" style="margin-bottom:10px">INCOME BONUSES</div>
+          <div id="bonusList"></div>
+        </div>
+
+        <button class="btn btn-purple" onclick="logout()">Log out</button>
+      </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav" id="bottomNav">
+      <button class="nav-item active" data-screen="empire" onclick="navigate('empire')">
+        <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 22V4a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v18" />
+            <path d="M15 22V11a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v11" />
+            <path d="M3 22h18" />
+            <path d="M9 8h1M9 12h1M9 16h1" />
+          </svg></span><span>Empire</span>
+      </button>
+      <button class="nav-item" data-screen="tap" onclick="navigate('tap')">
+        <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4l16 7.5-7 1.5-1.5 7z" />
+          </svg></span><span>Tap</span>
+      </button>
+      <button class="nav-item" data-screen="market" onclick="navigate('market')">
+        <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m22 7-8.5 8.5-5-5L2 17" />
+            <path d="M16 7h6v6" />
+          </svg></span><span>Market</span>
+      </button>
+      <button class="nav-item" data-screen="assets" onclick="navigate('assets')">
+        <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 18 2 7l5 4 5-7 5 7 5-4-2 11Z" />
+            <path d="M4 18h16v3H4z" />
+          </svg></span><span>Assets</span>
+      </button>
+      <button class="nav-item" data-screen="ranks" onclick="navigate('ranks')">
+        <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+            <path d="M4 22h16" />
+            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+          </svg></span><span>Ranks</span>
+      </button>
+      <button class="nav-item" data-screen="profile" onclick="navigate('profile')">
+        <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg></span><span>Profile</span>
+      </button>
+    </nav>
+
+  </div><!-- /app -->
+
+  <!-- Trade sheet -->
+  <div id="tradeModal" class="sheet-backdrop hidden" onclick="if(event.target===this)closeTrade()">
+    <div class="sheet">
+      <button class="sheet-close" onclick="closeTrade()" aria-label="Close">✕</button>
+      <div class="sheet-title" id="tradeTitle">—</div>
+      <div class="display sheet-price" id="tradePrice">$0</div>
+      <div class="mkt-chg" id="tradeChg">—</div>
+
+      <div class="card sheet-hold">
+        <div class="sheet-hold-row"><span>Your position</span><b id="tradeHold">—</b></div>
+        <div class="trade-pl" id="tradePL"></div>
+        <div class="sheet-hold-row" style="margin-top:6px"><span id="tradeCash">Cash: $0</span></div>
+      </div>
+
+      <div class="section-label" style="margin-top:16px">BUY · % OF YOUR CASH</div>
+      <div class="trade-row">
+        <button class="trade-btn trade-buy" onclick="doTrade('buy',0.25)">25%</button>
+        <button class="trade-btn trade-buy" onclick="doTrade('buy',0.5)">50%</button>
+        <button class="trade-btn trade-buy" onclick="doTrade('buy',1)">ALL IN</button>
+      </div>
+
+      <div class="section-label" style="margin-top:16px">SELL · % OF YOUR HOLDING</div>
+      <div class="trade-row">
+        <button class="trade-btn trade-sell" onclick="doTrade('sell',0.25)">25%</button>
+        <button class="trade-btn trade-sell" onclick="doTrade('sell',0.5)">50%</button>
+        <button class="trade-btn trade-sell" onclick="doTrade('sell',1)">SELL ALL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>
